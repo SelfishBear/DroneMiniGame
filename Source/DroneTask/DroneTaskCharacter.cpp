@@ -39,7 +39,7 @@ ADroneTaskCharacter::ADroneTaskCharacter()
 
 	DroneSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("DroneSpawnPoint"));
 	DroneSpawnPoint->SetupAttachment(GetCapsuleComponent());
-	DroneSpawnPoint->SetRelativeLocation(FVector(233.0, 143.0, 128.0 ));
+	
 
 }
 
@@ -84,28 +84,39 @@ void ADroneTaskCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 void ADroneTaskCharacter::ActivateDrone()
 {
+	if (!CanActivateDrone)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Drone exists"));
+		return;
+	}
+	
 	UWorld* World = GetWorld();
 	if (!World || !DroneSpawnPoint) return;
 	
-	FVector SpawnPointTransform = 	DroneSpawnPoint->GetRelativeLocation();
+	FVector SpawnPointTransform = 	DroneSpawnPoint->GetComponentLocation();
 	FRotator SpawnPointRotation = DroneSpawnPoint->GetComponentRotation();
 	
-	SpawnPointTransform = GetActorTransform().TransformPosition(SpawnPointTransform);
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	ADronePawn* DronePawn = World->SpawnActor<ADronePawn>(ADronePawn::StaticClass(), SpawnPointTransform, SpawnPointRotation.Add(0.0f,-90.0f, 0.0f), SpawnParams);
+	APawn* DronePawn = World->SpawnActor<APawn>(BPDrone, SpawnPointTransform, SpawnPointRotation, SpawnParams);
 
-	if (DronePawn)
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+	
+	if (DronePawn && PlayerController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Дрон заспавнен в: %s"), *SpawnPointTransform.ToString());
+		PlayerController->Possess(DronePawn);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Ошибка спавна дрона!"));
 	}
+	CanActivateDrone = false;
 }
+
+
 
 
 void ADroneTaskCharacter::Move(const FInputActionValue& Value)

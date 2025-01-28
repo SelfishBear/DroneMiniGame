@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "DroneTaskCharacter.generated.h"
 
+class ADronePawn;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -52,6 +53,9 @@ class ADroneTaskCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* DroneSpawnPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<ADronePawn> BPDrone;
 	
 public:
 	ADroneTaskCharacter();
@@ -78,5 +82,7 @@ public:
 private:
 	UFUNCTION(BlueprintCallable, Category="Drone")
 	void ActivateDrone();
+
+	bool CanActivateDrone = true;
 };
 

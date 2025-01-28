@@ -8,11 +8,14 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "GameFramework/SpringArmComponent.h"
 
+
+
 // Sets default values
 ADronePawn::ADronePawn()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 
 	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>("DefaultSceneRoot");
 	RootComponent = DefaultSceneRoot;
@@ -43,21 +46,18 @@ ADronePawn::ADronePawn()
 	}
 }
 
-// Called when the game starts or when spawned
 void ADronePawn::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void ADronePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-// Called to bind functionality to input
 void ADronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -65,8 +65,8 @@ void ADronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	PlayerInputComponent->BindAxis("MoveForward", this, &ADronePawn::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ADronePawn::MoveRight);
 	PlayerInputComponent->BindAxis("MoveUp", this, &ADronePawn::MoveUp);
-	PlayerInputComponent->BindAxis("LookUp", this, &ADronePawn::LookUp);
-	PlayerInputComponent->BindAxis("TurnRight", this, &ADronePawn::TurnRight);
+	PlayerInputComponent->BindAxis("LookUp", this, &ADronePawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("TurnRight", this, &ADronePawn::AddControllerYawInput);
 
 }
 
@@ -95,13 +95,4 @@ void ADronePawn::MoveUp(float Value)
 	
 }
 
-void ADronePawn::LookUp(float Value)
-{
-	AddControllerPitchInput(Value);
-}
-
-void ADronePawn::TurnRight(float Value)
-{
-	AddControllerYawInput(Value);
-}
 
