@@ -10,8 +10,10 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
+#include "Public/DronePawn.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
+DEFINE_LOG_CATEGORY_STATIC(SHISH, All, All);
 
 //////////////////////////////////////////////////////////////////////////
 // ADroneTaskCharacter
@@ -34,6 +36,10 @@ ADroneTaskCharacter::ADroneTaskCharacter()
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
+
+	DroneSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("DroneSpawnPoint"));
+	DroneSpawnPoint->SetupAttachment(GetCapsuleComponent());
+	DroneSpawnPoint->SetRelativeLocation(FVector(233.0, 143.0, 128.0 ));
 
 }
 
@@ -67,10 +73,37 @@ void ADroneTaskCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADroneTaskCharacter::Look);
+		
+		EnhancedInputComponent->BindAction(ActivateDroneAction, ETriggerEvent::Started, this, &ADroneTaskCharacter::ActivateDrone);
 	}
 	else
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void ADroneTaskCharacter::ActivateDrone()
+{
+	UWorld* World = GetWorld();
+	if (!World || !DroneSpawnPoint) return;
+	
+	FVector SpawnPointTransform = 	DroneSpawnPoint->GetRelativeLocation();
+	FRotator SpawnPointRotation = DroneSpawnPoint->GetComponentRotation();
+	
+	SpawnPointTransform = GetActorTransform().TransformPosition(SpawnPointTransform);
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	ADronePawn* DronePawn = World->SpawnActor<ADronePawn>(ADronePawn::StaticClass(), SpawnPointTransform, SpawnPointRotation.Add(0.0f,-90.0f, 0.0f), SpawnParams);
+
+	if (DronePawn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Дрон заспавнен в: %s"), *SpawnPointTransform.ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Ошибка спавна дрона!"));
 	}
 }
 
