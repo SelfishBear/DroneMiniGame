@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Blueprint/UserWidget.h"
 #include "DronePawn.generated.h"
 
+class AProjectTile;
+class UProjectTileObjectPool;
+class ADroneTaskCharacter;
 class USpringArmComponent;
 class UBoxComponent;
 class UCameraComponent;
@@ -18,7 +22,6 @@ class DRONETASK_API ADronePawn : public APawn
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
 	ADronePawn();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -29,9 +32,6 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USkeletalMeshComponent* DroneMesh;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USpringArmComponent* SpringArm;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* DroneCamera;
@@ -39,26 +39,54 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UFloatingPawnMovement* DroneFloatingComponent;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USceneComponent* ShootPoint;
+	
+	UPROPERTY()
+	ADroneTaskCharacter* OwnerCharacter = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectTile")
+	TSubclassOf<AProjectTile> ProjectTileClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneUI")
+	TSubclassOf<UUserWidget> DroneUIClass;
+	
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting", meta = (AllowPrivateAccess = "true"))
+	float FireRate = 0.2f;
+
+	bool bIsShooting = false;
+	
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 
 public:	
-	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
-	
 private:
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting", meta = (AllowPrivateAccess = "true"))
+	int32 AmmoAmount;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health", meta = (AllowPrivateAccess = "true"))
+	float Health;
+	
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void MoveUp(float Value);
+	
 	void LookUp(float Value);
 	void TurnRight(float Value);
+
+	void HandleShooting(float Value);
+	
+	void Shoot();
+
+	void DeactivateDrone();
+
+	FTimerHandle FireRateTimerHandle;
+	
 };
