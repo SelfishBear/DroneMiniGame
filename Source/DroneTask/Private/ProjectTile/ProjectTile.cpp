@@ -2,19 +2,22 @@
 
 
 #include "ProjectTile/ProjectTile.h"
+
+#include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AProjectTile::AProjectTile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-	RootComponent = Root;
+	BoxRoot = CreateDefaultSubobject<UBoxComponent>(TEXT("Root"));
+	RootComponent = BoxRoot;
+	BoxRoot->OnComponentHit.AddDynamic(this, &AProjectTile::NotifyHit);
 
 	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectTile"));
 	TileMesh->SetupAttachment(RootComponent);
 	TileMesh->SetSimulatePhysics(false);
-	TileMesh->OnComponentHit.AddDynamic(this, &AProjectTile::NotifyHit);
+	
 
 	TileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	TileMovementComponent->InitialSpeed = InitialSpeed;
@@ -35,6 +38,7 @@ float AProjectTile::GetInitialSpeed()
 void AProjectTile::NotifyHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ACTOR DESTROYED"));
 	Destroy();
 }
 

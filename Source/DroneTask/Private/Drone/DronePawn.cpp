@@ -58,14 +58,11 @@ void ADronePawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UP
 
 	if (OtherActor->Implements<UIPickable>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("YES IMPLEMETS INTERFACE"));
-		
 		IIPickable* Pickable = Cast<IIPickable>(OtherActor);
 		if (Pickable)
 		{
 			Pickable->PickUp(this);
 		}
-		
 	}
 }
 
@@ -131,7 +128,7 @@ void ADronePawn::HandleShooting(float Value)
 		if (!bIsShooting)
 		{
 			bIsShooting = true;
-			Shoot(); // Делаем первый выстрел сразу
+			Shoot(); 
 			GetWorldTimerManager().SetTimer(FireRateTimerHandle, this, &ADronePawn::Shoot, FireRate, true);
 		}
 	}

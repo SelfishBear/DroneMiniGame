@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ProjectTile.generated.h"
 
+class UBoxComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
@@ -17,7 +18,7 @@ public:
 	AProjectTile();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
-	USceneComponent* Root;
+	UBoxComponent* BoxRoot;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* TileMesh;

@@ -14,7 +14,6 @@ class DRONETASK_API AAmmoBox : public AActor, public IIPickable
 	
 public:	
 	AAmmoBox();
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* Root;
 	
