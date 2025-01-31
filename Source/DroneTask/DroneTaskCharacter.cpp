@@ -10,14 +10,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
-#include "Public/DronePawn.h"
+#include "Public/Drone/DronePawn.h"
 
 DEFINE_LOG_CATEGORY_STATIC(ADroneTaskCharacterLog, All, All);
 
 ADroneTaskCharacter::ADroneTaskCharacter()
 {
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
 	FirstPersonCameraComponent->SetRelativeLocation(FVector(-10.f, 0.f, 60.f));
@@ -32,8 +32,6 @@ ADroneTaskCharacter::ADroneTaskCharacter()
 
 	DroneSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("DroneSpawnPoint"));
 	DroneSpawnPoint->SetupAttachment(GetCapsuleComponent());
-	
-
 }
 
 void ADroneTaskCharacter::NotifyControllerChanged()
@@ -42,7 +40,8 @@ void ADroneTaskCharacter::NotifyControllerChanged()
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -50,22 +49,25 @@ void ADroneTaskCharacter::NotifyControllerChanged()
 }
 
 void ADroneTaskCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{	
+{
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADroneTaskCharacter::Move);
-		
+
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADroneTaskCharacter::Look);
-		
-		EnhancedInputComponent->BindAction(ActivateDroneAction, ETriggerEvent::Started, this, &ADroneTaskCharacter::ActivateDrone);
-		
+
+		EnhancedInputComponent->BindAction(ActivateDroneAction, ETriggerEvent::Started, this,
+		                                   &ADroneTaskCharacter::ActivateDrone);
 	}
 	else
 	{
-		UE_LOG(ADroneTaskCharacterLog, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(ADroneTaskCharacterLog, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
@@ -76,27 +78,28 @@ void ADroneTaskCharacter::ActivateDrone()
 		UE_LOG(LogTemp, Warning, TEXT("Drone exists"));
 		return;
 	}
-	
+
 	UWorld* World = GetWorld();
 	if (!World || !DroneSpawnPoint) return;
-	
-	FVector SpawnPointTransform = 	DroneSpawnPoint->GetComponentLocation();
+
+	FVector SpawnPointTransform = DroneSpawnPoint->GetComponentLocation();
 	FRotator SpawnPointRotation = DroneSpawnPoint->GetComponentRotation();
-	
+
 
 	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride =  ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-	ADronePawn* DronePawn = World->SpawnActor<ADronePawn>(BPDrone, SpawnPointTransform, SpawnPointRotation, SpawnParams);
+	ADronePawn* DronePawn = World->SpawnActor<
+		ADronePawn>(BPDrone, SpawnPointTransform, SpawnPointRotation, SpawnParams);
 
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	
+
 	if (DronePawn && PlayerController)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Дрон заспавнен в: %s"), *SpawnPointTransform.ToString());
 
 		DronePawn->OwnerCharacter = this;
-		
+
 		PlayerController->Possess(DronePawn);
 	}
 	else

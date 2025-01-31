@@ -41,14 +41,13 @@ class ADroneTaskCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* ActivateDroneAction;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Mesh, meta = (AllowPrivateAccess = "true"))
 	USceneComponent* DroneSpawnPoint;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drone", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ADronePawn> BPDrone;
 
-	
 public:
 	ADroneTaskCharacter();
 
@@ -66,12 +65,10 @@ protected:
 
 public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
-	
+
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
 
 private:
 	UFUNCTION(BlueprintCallable, Category="Drone")
 	void ActivateDrone();
-	
 };
-
