@@ -44,7 +44,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HealthComponent")
 	UHealthComponent* HealthComponent;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting")
 	float FireRate = 1.0f;
 
@@ -60,7 +60,6 @@ public:
 
 	UFUNCTION()
 	void FindDrone(APawn* Pawn);
-
 
 private:
 	void Shoot();

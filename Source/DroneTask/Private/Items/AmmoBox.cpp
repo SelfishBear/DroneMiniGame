@@ -13,19 +13,16 @@ AAmmoBox::AAmmoBox()
 
 	BoxMesh = CreateDefaultSubobject<UStaticMeshComponent>("BoxMesh");
 	BoxMesh->SetupAttachment(RootComponent);
-	
 }
 
 void AAmmoBox::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AAmmoBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AAmmoBox::PickUp(AActor* Picker)
@@ -38,4 +35,3 @@ void AAmmoBox::PickUp(AActor* Picker)
 		Destroy();
 	}
 }
-

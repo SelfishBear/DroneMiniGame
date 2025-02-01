@@ -17,6 +17,5 @@ class DRONETASK_API IIPickable
 	GENERATED_BODY()
 
 public:
-
 	virtual void PickUp(AActor* Picker) = 0;
 };

@@ -75,13 +75,13 @@ protected:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	           FVector NormalImpulse, const FHitResult& Hit);
-	
+
 	virtual void ApplyDamage(float DamageAmount) override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting", meta = (AllowPrivateAccess = "true"))

@@ -22,5 +22,3 @@ bool UHealthComponent::IsDead()
 	}
 	return false;
 }
-
-

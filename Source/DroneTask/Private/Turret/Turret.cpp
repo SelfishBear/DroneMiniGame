@@ -21,16 +21,15 @@ ATurret::ATurret()
 
 	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	Arrow->SetupAttachment(RootComponent);
-	
+
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
 
 	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
 	GunMesh->SetupAttachment(TurretMesh);
 
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
-	
+
 	PawnSens = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSens"));
-	
 }
 
 void ATurret::BeginPlay()
@@ -38,7 +37,7 @@ void ATurret::BeginPlay()
 	Super::BeginPlay();
 
 	HealthComponent->OnActorDeath.AddDynamic(this, &ATurret::DestroyTurret);
-	
+
 	PawnSens->OnSeePawn.AddDynamic(this, &ATurret::FindDrone);
 }
 
@@ -83,7 +82,6 @@ void ATurret::Shoot()
 
 	if (World)
 	{
-	
 		FVector Location = Arrow->GetComponentLocation();
 		FRotator Rotation = Arrow->GetComponentRotation();
 
@@ -96,14 +94,12 @@ void ATurret::Shoot()
 			ProjectTileClass, Location, Rotation, SpawnParams);
 		if (ProjectTile)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ProjectTile SPAWNED AT: %s"), *ProjectTile->GetActorLocation().ToString());
 			const float InitialSpeed = ProjectTile->GetInitialSpeed();
 
 			UProjectileMovementComponent* ProjectileMovementComponent = ProjectTile->FindComponentByClass<
 				UProjectileMovementComponent>();
 			if (ProjectileMovementComponent)
 			{
-				
 				ProjectileMovementComponent->Velocity = (InitialSpeed + 5000.0f) * ArrowFW;
 			}
 		}
@@ -127,7 +123,6 @@ void ATurret::StopShooting()
 void ATurret::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ATurret::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

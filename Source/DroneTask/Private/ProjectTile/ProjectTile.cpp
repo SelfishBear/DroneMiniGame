@@ -18,7 +18,7 @@ AProjectTile::AProjectTile()
 	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectTile"));
 	TileMesh->SetupAttachment(RootComponent);
 	TileMesh->SetSimulatePhysics(false);
-	
+
 
 	TileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	TileMovementComponent->InitialSpeed = InitialSpeed;
@@ -42,7 +42,6 @@ void AProjectTile::NotifyHit(UPrimitiveComponent* HitComp, AActor* OtherActor, U
 	if (!OtherActor) return;
 	if (OtherActor->Implements<UIDamageable>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("IMPELEMNTS IDAMAGEABLE"));
 		IIDamageable* Damageable = Cast<IIDamageable>(OtherActor);
 		if (Damageable)
 		{

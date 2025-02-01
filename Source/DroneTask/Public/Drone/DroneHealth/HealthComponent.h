@@ -19,14 +19,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="Health", meta=(ClampMin = 0.0f, ClampMax = 100.0f))
 	float CurrentHealth = 0;
-	
+
 	UFUNCTION(BlueprintCallable, Category="Health")
 	float GetHealth() { return CurrentHealth; }
-	
+
 	UFUNCTION(BlueprintCallable, Category="Health")
 	bool IsDead();
 

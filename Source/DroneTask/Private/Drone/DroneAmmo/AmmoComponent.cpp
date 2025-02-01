@@ -5,16 +5,10 @@
 
 UAmmoComponent::UAmmoComponent()
 {
-
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 void UAmmoComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	
 }
-
-

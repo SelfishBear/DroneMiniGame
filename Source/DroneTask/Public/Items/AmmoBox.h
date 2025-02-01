@@ -11,23 +11,23 @@ UCLASS()
 class DRONETASK_API AAmmoBox : public AActor, public IIPickable
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	AAmmoBox();
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	USceneComponent* Root;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* BoxMesh;
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PickUp(AActor* Picker) override;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Ammo", meta =(ClampMin = 0, ClampMax = 75))
 	int32 AmmoAmount;
 };

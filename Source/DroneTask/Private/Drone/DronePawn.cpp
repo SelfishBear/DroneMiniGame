@@ -47,7 +47,7 @@ void ADronePawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DroneUI = CreateWidget( GetWorld(), DroneUIClass);
+	DroneUI = CreateWidget(GetWorld(), DroneUIClass);
 	DroneUI->AddToViewport();
 
 	BoxRoot->OnComponentHit.AddDynamic(this, &ADronePawn::OnHit);
@@ -73,7 +73,6 @@ void ADronePawn::ApplyDamage(float DamageAmount)
 {
 	HealthComponent->CurrentHealth = HealthComponent->CurrentHealth - DamageAmount;
 	HealthComponent->IsDead();
-	
 }
 
 void ADronePawn::Tick(float DeltaTime)
@@ -136,7 +135,7 @@ void ADronePawn::HandleShooting(float Value)
 		if (!bIsShooting)
 		{
 			bIsShooting = true;
-			Shoot(); 
+			Shoot();
 			GetWorldTimerManager().SetTimer(FireRateTimerHandle, this, &ADronePawn::Shoot, FireRate, true);
 		}
 	}
@@ -190,6 +189,7 @@ void ADronePawn::Shoot()
 void ADronePawn::DeactivateDrone()
 {
 	DroneUI->RemoveFromParent();
+
 	UWorld* World = GetWorld();
 	if (!World) return;
 
@@ -203,6 +203,4 @@ void ADronePawn::DeactivateDrone()
 		OwnerCharacter->bCanActivateDrone = true;
 		Destroy();
 	}
-
-	UE_LOG(LogTemp, Error, TEXT("DEACTIVATE DRONE"));
 }

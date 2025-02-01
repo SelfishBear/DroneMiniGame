@@ -2,10 +2,8 @@
 
 
 #include "Items/HealthBox.h"
-
 #include "Drone/DroneHealth/HealthComponent.h"
 
-// Sets default values
 AHealthBox::AHealthBox()
 {
 	PrimaryActorTick.bCanEverTick = true;
