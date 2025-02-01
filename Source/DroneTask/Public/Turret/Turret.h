@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Interfaces/IDamageable.h"
 #include "Turret.generated.h"
 
+class UHealthComponent;
 class ADronePawn;
 class AProjectTile;
 class UArrowComponent;
@@ -15,7 +17,7 @@ class UProjectileMovementComponent;
 
 
 UCLASS()
-class DRONETASK_API ATurret : public APawn
+class DRONETASK_API ATurret : public APawn, public IIDamageable
 {
 	GENERATED_BODY()
 
@@ -29,7 +31,10 @@ public:
 	UStaticMeshComponent* TurretMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* ShootPoint;
+	UStaticMeshComponent* GunMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UArrowComponent* Arrow;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Awareness")
 	UPawnSensingComponent* PawnSens;
@@ -37,11 +42,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectTile")
 	TSubclassOf<AProjectTile> ProjectTileClass;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "HealthComponent")
+	UHealthComponent* HealthComponent;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting")
 	float FireRate = 1.0f;
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void ApplyDamage(float DamageAmount) override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
@@ -55,10 +65,15 @@ public:
 private:
 	void Shoot();
 
+	FTransform InitialTransform;
+
 	UPROPERTY()
 	ADronePawn* Target = nullptr;
 
 	FTimerHandle OnFireTimer;
+
+	UFUNCTION()
+	void DestroyTurret();
 
 	void StartShooting();
 	void StopShooting();

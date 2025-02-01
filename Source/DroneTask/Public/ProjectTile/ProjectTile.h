@@ -30,6 +30,9 @@ public:
 
 	float GetInitialSpeed();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TileDamage", meta=(AllowPrivateAccess = "true"))
+	float TileDamage = 30.0f;
+
 protected:
 	UFUNCTION()
 	void NotifyHit(
@@ -43,7 +46,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	float MaxSpeed = 2000.0f;
+	float MaxSpeed = 5000.0f;
 	float InitialSpeed = MaxSpeed;
 
 	FTimerHandle ReturnTimerHandle;

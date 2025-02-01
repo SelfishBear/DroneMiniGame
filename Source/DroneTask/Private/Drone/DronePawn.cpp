@@ -47,8 +47,11 @@ void ADronePawn::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DroneUI = CreateWidget( GetWorld(), DroneUIClass);
+	DroneUI->AddToViewport();
+
 	BoxRoot->OnComponentHit.AddDynamic(this, &ADronePawn::OnHit);
-	HealthComponent->OnDroneDeath.AddDynamic(this, &ADronePawn::DeactivateDrone);
+	HealthComponent->OnActorDeath.AddDynamic(this, &ADronePawn::DeactivateDrone);
 }
 
 void ADronePawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -66,11 +69,16 @@ void ADronePawn::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UP
 	}
 }
 
+void ADronePawn::ApplyDamage(float DamageAmount)
+{
+	HealthComponent->CurrentHealth = HealthComponent->CurrentHealth - DamageAmount;
+	HealthComponent->IsDead();
+	
+}
+
 void ADronePawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	HealthComponent->IsDead();
 }
 
 void ADronePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -181,6 +189,7 @@ void ADronePawn::Shoot()
 
 void ADronePawn::DeactivateDrone()
 {
+	DroneUI->RemoveFromParent();
 	UWorld* World = GetWorld();
 	if (!World) return;
 

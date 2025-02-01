@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Interfaces/IDamageable.h"
 
 AProjectTile::AProjectTile()
 {
@@ -38,7 +39,16 @@ float AProjectTile::GetInitialSpeed()
 void AProjectTile::NotifyHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                              FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ACTOR DESTROYED"));
+	if (!OtherActor) return;
+	if (OtherActor->Implements<UIDamageable>())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("IMPELEMNTS IDAMAGEABLE"));
+		IIDamageable* Damageable = Cast<IIDamageable>(OtherActor);
+		if (Damageable)
+		{
+			Damageable->ApplyDamage(TileDamage);
+		}
+	}
 	Destroy();
 }
 

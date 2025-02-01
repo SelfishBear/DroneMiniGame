@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDroneDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnActorDeath);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class DRONETASK_API UHealthComponent : public UActorComponent
@@ -30,5 +30,5 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Health")
 	bool IsDead();
 
-	FOnDroneDeath OnDroneDeath;
+	FOnActorDeath OnActorDeath;
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "Blueprint/UserWidget.h"
+#include "Interfaces/IDamageable.h"
 #include "DronePawn.generated.h"
 
 class UAmmoComponent;
@@ -20,7 +21,7 @@ class USkeletalMeshComponent;
 class UFloatingPawnMovement;
 
 UCLASS()
-class DRONETASK_API ADronePawn : public APawn
+class DRONETASK_API ADronePawn : public APawn, public IIDamageable
 {
 	GENERATED_BODY()
 
@@ -57,6 +58,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ProjectTile")
 	TSubclassOf<AProjectTile> ProjectTileClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DroneUI")
+	TSubclassOf<UUserWidget> DroneUIClass;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "DroneUI")
+	UUserWidget* DroneUI;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Shooting", meta = (AllowPrivateAccess = "true"))
 	float FireRate = 0.2f;
 
@@ -68,6 +75,8 @@ protected:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	           FVector NormalImpulse, const FHitResult& Hit);
+	
+	virtual void ApplyDamage(float DamageAmount) override;
 
 public:
 	virtual void Tick(float DeltaTime) override;

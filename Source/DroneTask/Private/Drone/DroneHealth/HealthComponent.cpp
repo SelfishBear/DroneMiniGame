@@ -17,7 +17,7 @@ bool UHealthComponent::IsDead()
 {
 	if (CurrentHealth <= 0.0f)
 	{
-		OnDroneDeath.Broadcast();
+		OnActorDeath.Broadcast();
 		return true;
 	}
 	return false;

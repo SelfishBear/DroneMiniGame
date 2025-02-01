@@ -6,6 +6,7 @@
 #include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Drone/DronePawn.h"
+#include "Drone/DroneHealth/HealthComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "ProjectTile/ProjectTile.h"
@@ -18,20 +19,38 @@ ATurret::ATurret()
 	BoxRoot = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxRoot"));
 	RootComponent = BoxRoot;
 
+	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+	Arrow->SetupAttachment(RootComponent);
+	
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
-	TurretMesh->SetupAttachment(RootComponent);
 
-	ShootPoint = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ShootPoint"));
-	ShootPoint->SetupAttachment(TurretMesh);
+	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
+	GunMesh->SetupAttachment(TurretMesh);
 
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
+	
 	PawnSens = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSens"));
+	
 }
 
 void ATurret::BeginPlay()
 {
 	Super::BeginPlay();
 
+	HealthComponent->OnActorDeath.AddDynamic(this, &ATurret::DestroyTurret);
+	
 	PawnSens->OnSeePawn.AddDynamic(this, &ATurret::FindDrone);
+}
+
+void ATurret::ApplyDamage(float DamageAmount)
+{
+	HealthComponent->CurrentHealth = HealthComponent->CurrentHealth - DamageAmount;
+	HealthComponent->IsDead();
+}
+
+void ATurret::DestroyTurret()
+{
+	Destroy();
 }
 
 void ATurret::FindDrone(APawn* Pawn)
@@ -64,15 +83,11 @@ void ATurret::Shoot()
 
 	if (World)
 	{
-		if (!ShootPoint)
-		{
-			UE_LOG(LogTemp, Error, TEXT("ShootPoint is null!"));
-			return;
-		}
-		FVector Location = ShootPoint->GetComponentLocation();
-		FRotator Rotation = ShootPoint->GetComponentRotation();
+	
+		FVector Location = Arrow->GetComponentLocation();
+		FRotator Rotation = Arrow->GetComponentRotation();
 
-		FVector ShootPointFW = ShootPoint->GetForwardVector();
+		FVector ArrowFW = Arrow->GetForwardVector();
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
@@ -81,13 +96,15 @@ void ATurret::Shoot()
 			ProjectTileClass, Location, Rotation, SpawnParams);
 		if (ProjectTile)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("ProjectTile SPAWNED AT: %s"), *ProjectTile->GetActorLocation().ToString());
 			const float InitialSpeed = ProjectTile->GetInitialSpeed();
 
 			UProjectileMovementComponent* ProjectileMovementComponent = ProjectTile->FindComponentByClass<
 				UProjectileMovementComponent>();
 			if (ProjectileMovementComponent)
 			{
-				ProjectileMovementComponent->Velocity = InitialSpeed * ShootPointFW;
+				
+				ProjectileMovementComponent->Velocity = (InitialSpeed + 5000.0f) * ArrowFW;
 			}
 		}
 	}
@@ -110,6 +127,7 @@ void ATurret::StopShooting()
 void ATurret::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ATurret::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
