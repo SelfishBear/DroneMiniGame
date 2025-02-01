@@ -23,6 +23,7 @@ ATurret::ATurret()
 	Arrow->SetupAttachment(RootComponent);
 
 	TurretMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TurretMesh"));
+	TurretMesh->SetupAttachment(RootComponent);
 
 	GunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GunMesh"));
 	GunMesh->SetupAttachment(TurretMesh);
